@@ -6,8 +6,10 @@ from datetime import datetime
 import joblib
 import pickle
 
-# HARUS menjadi perintah Streamlit pertama!
+# --- ANTARMUKA PENGGUNA STREAMLIT ---
 st.set_page_config(page_title="Prediksi Harga Mobil Bekas", layout="wide")
+st.title("🚗 Prediksi Harga Mobil Bekas")
+st.markdown("Masukkan detail mobil untuk mendapatkan estimasi harga jual.")
 
 # --- FUNGSI UNTUK MEMUAT MODEL DAN DATA PENDUKUNG ---
 @st.cache_resource # Cache resource agar tidak load ulang setiap interaksi
@@ -33,10 +35,6 @@ if model is None or training_columns is None or input_options is None:
     st.error("File model atau resource pendukung tidak ditemukan. Pastikan 'model.joblib', 'training_columns.pkl', dan 'input_options.pkl' ada di repositori dan jalankan 'train_model.py' jika perlu.")
     st.stop() # Hentikan eksekusi jika resource tidak ada
     
-# --- ANTARMUKA PENGGUNA STREAMLIT ---
-st.set_page_config(page_title="Prediksi Harga Mobil Bekas", layout="wide")
-st.title("🚗 Prediksi Harga Mobil Bekas")
-st.markdown("Masukkan detail mobil untuk mendapatkan estimasi harga jual.")
 
 if model is None or training_columns is None or input_options is None:
     st.warning("Aplikasi tidak dapat berjalan karena resource penting (model/kolom/opsi input) gagal dimuat. Silakan periksa pesan error di atas.")
