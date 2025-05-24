@@ -6,42 +6,33 @@ from datetime import datetime
 import joblib
 import pickle
 
+# HARUS menjadi perintah Streamlit pertama!
+st.set_page_config(page_title="Prediksi Harga Mobil Bekas", layout="wide")
+
 # --- FUNGSI UNTUK MEMUAT MODEL DAN DATA PENDUKUNG ---
 @st.cache_resource # Cache resource agar tidak load ulang setiap interaksi
 def load_resources():
+    model, training_cols, input_options = None, None, None
     try:
         model = joblib.load('model.joblib')
-    except FileNotFoundError:
-        st.error("File model 'model.joblib' tidak ditemukan. Jalankan 'train_model.py' terlebih dahulu.")
-        return None, None, None
-    except Exception as e:
-        st.error(f"Error saat memuat model: {e}")
-        return None, None, None
-
-    try:
         with open('training_columns.pkl', 'rb') as f:
             training_columns = pickle.load(f)
-    except FileNotFoundError:
-        st.error("File 'training_columns.pkl' tidak ditemukan. Jalankan 'train_model.py' terlebih dahulu.")
-        return model, None, None # Kembalikan model jika ada, tapi kolom tidak
-    except Exception as e:
-        st.error(f"Error saat memuat kolom training: {e}")
-        return model, None, None
-
-    try:
         with open('input_options.pkl', 'rb') as f:
             input_options = pickle.load(f)
-    except FileNotFoundError:
-        st.error("File 'input_options.pkl' tidak ditemukan. Jalankan 'train_model.py' terlebih dahulu.")
-        return model, training_columns, None # Kembalikan model & kolom jika ada
+    except FileNotFoundError as e:
+        # Jangan panggil st.error() di sini jika ini sebelum set_page_config dieksekusi di scope utama
+        print(f"Resource loading error (FileNotFound): {e}") # Log ke konsol server
     except Exception as e:
-        st.error(f"Error saat memuat opsi input: {e}")
-        return model, training_columns, None
-
+        print(f"Resource loading error (Exception): {e}") # Log ke konsol server
     return model, training_columns, input_options
 
 model, training_columns, input_options = load_resources()
 
+# Sekarang aman untuk menggunakan st.error atau st.warning jika resource gagal dimuat
+if model is None or training_columns is None or input_options is None:
+    st.error("File model atau resource pendukung tidak ditemukan. Pastikan 'model.joblib', 'training_columns.pkl', dan 'input_options.pkl' ada di repositori dan jalankan 'train_model.py' jika perlu.")
+    st.stop() # Hentikan eksekusi jika resource tidak ada
+    
 # --- ANTARMUKA PENGGUNA STREAMLIT ---
 st.set_page_config(page_title="Prediksi Harga Mobil Bekas", layout="wide")
 st.title("🚗 Prediksi Harga Mobil Bekas")
