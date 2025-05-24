@@ -1,0 +1,8 @@
+streamlit
+pandas
+numpy
+scikit-learn
+joblib
+# Tambahkan library lain yang Anda gunakan, misalnya:
+# pickle5 (jika Anda secara eksplisit menggunakan pickle versi 5)
+# datetime (biasanya bagian dari Python standar, tidak perlu ditulis)
